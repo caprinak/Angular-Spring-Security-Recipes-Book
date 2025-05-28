@@ -26,26 +26,7 @@
     </div>
   </div>
 
-  <!-- Filter by category -->
-  <div class="row mb-4">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Filter Recipes</h5>
-          <div class="btn-group" role="group">
-            <button 
-              *ngFor="let category of categories"
-              class="btn"
-              [class.btn-primary]="selectedCategory === category"
-              [class.btn-outline-primary]="selectedCategory !== category"
-              (click)="onSelectCategory(category)">
-              {{ category }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+ 
   <!-- Display current recipes -->
   <div class="row">
     <div class="col-md-12">

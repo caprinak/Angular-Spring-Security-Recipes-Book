@@ -18,4 +18,5 @@ public class Ingredient {
     private Long id;
     private String name;
     private String amount;
+    private String units;
 }

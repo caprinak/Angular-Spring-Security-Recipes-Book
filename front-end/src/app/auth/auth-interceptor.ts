@@ -3,46 +3,41 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
-  HttpEvent,
-  HttpHeaders
+  HttpHeaders,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { exhaustMap, take } from 'rxjs/operators';
+import { take, exhaustMap, catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
+import { Router } from '@angular/router';
+
 import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<any>, next: HttpHandler) {
     return this.authService.user.pipe(
       take(1),
       exhaustMap(user => {
-        // Add console.log to debug
-        console.log('Interceptor running, user:', user);
-        
         if (!user) {
-          console.log('No user found in interceptor');
-          return next.handle(request);
+          console.log('Auth interceptor: No user found');
+          return next.handle(req);
         }
-
-        // Add console.log to verify token
-        console.log('Adding token:', user.token);
-        
-        const modifiedReq = request.clone({
-          headers: new HttpHeaders().set(
-            'Authorization',
-            `Bearer ${user.token}`
-          )
+        console.log('Auth interceptor: Adding bearer token', req.url);
+        const modifiedReq = req.clone({
+          headers: req.headers.set('Authorization', `Bearer ${user.token}`)
         });
-
-        // Log the final request
-        console.log('Modified request headers:', modifiedReq.headers.get('Authorization'));
-        
-        return next.handle(modifiedReq);
+        return next.handle(modifiedReq).pipe(
+          catchError((error: HttpErrorResponse) => {
+            if (error.status === 401) {
+              console.log('Auth interceptor: Token expired or invalid');
+              this.authService.logout();
+              this.router.navigate(['/auth']);
+            }
+            return throwError(() => error);
+          })
+        );
       })
     );
   }

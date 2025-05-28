@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, tap } from 'rxjs/operators';
-import { throwError, BehaviorSubject } from 'rxjs';
+import { catchError, tap, map } from 'rxjs/operators';
+import { throwError, BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 
 import { User } from './user.model';
 
@@ -21,8 +21,31 @@ export interface AuthResponseData {
 export class AuthService {
   user = new BehaviorSubject<User>(null);
   private tokenExpirationTimer: any;
+  private isInitialized = new ReplaySubject<boolean>(1);
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    this.initializeAuth();
+  }
+
+  private initializeAuth() {
+    try {
+      this.autoLogin();
+      this.isInitialized.next(true);
+    } catch (error) {
+      console.error('Error during auth initialization:', error);
+      this.isInitialized.next(false);
+    }
+  }
+
+  get initialized(): Observable<boolean> {
+    return this.isInitialized.asObservable();
+  }
+
+  get isAuthenticated(): Observable<boolean> {
+    return this.user.pipe(
+      map(user => !!user)
+    );
+  }
 
   signup(email: string, password: string) {
     return this.http
@@ -78,6 +101,7 @@ export class AuthService {
       _tokenExpirationDate: string;
     } = JSON.parse(localStorage.getItem('userData'));
     if (!userData) {
+      this.isInitialized.next(true); // Still initialized, just with no user
       return;
     }
 

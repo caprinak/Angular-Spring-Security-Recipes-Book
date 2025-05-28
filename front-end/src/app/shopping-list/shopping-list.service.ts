@@ -1,3 +1,4 @@
+import { MeasurementUnit } from '../shared/enums/measurement-unit.enum';
 import { Ingredient } from '../shared/ingredient.model';
 import { Subject } from 'rxjs';
 
@@ -5,8 +6,8 @@ export class ShoppingListService {
   ingredientsChanged = new Subject<Ingredient[]>();
   startedEditing = new Subject<number>();
   private ingredients: Ingredient[] = [
-    new Ingredient('Apples', 5),
-    new Ingredient('Tomatoes', 10),
+    new Ingredient('Apples', 5, MeasurementUnit.KILOGRAM),
+    new Ingredient('Tomatoes', 10, MeasurementUnit.KILOGRAM)
   ];
 
   getIngredients() {
