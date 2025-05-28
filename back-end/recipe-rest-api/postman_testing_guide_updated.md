@@ -149,11 +149,11 @@ All recipe endpoints require authentication with a valid JWT token.
 **Request Body:**
 ```json
 [
-  {
-    "name": "Tasty Schnitzel",
-    "description": "A super-tasty Schnitzel - just awesome!",
-    "imagePath": "https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG",
-    "category": "DINNER",
+   {
+      "name": "Tasty Schnitzel",
+      "description": "A super-tasty Schnitzel - just awesome!",
+      "imagePath": "https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG",
+      "category": "DINNER",
     "ingredients": [
       {
         "name": "Meat",
