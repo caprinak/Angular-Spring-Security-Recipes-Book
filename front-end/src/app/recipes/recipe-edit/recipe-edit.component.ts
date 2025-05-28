@@ -67,11 +67,10 @@ export class RecipeEditComponent implements OnInit {
   onCancel() {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
-  private initForm() {
-    let recipeName = '';
+  private initForm() {    let recipeName = '';
     let recipeImagePath = '';
     let recipeDescription = '';
-    let recipeCategory;
+    let recipeCategory = MealCategory.BREAKFAST;
     let recipeIngredients = new FormArray([]);
 
     if (this.editMode) {
@@ -93,13 +92,11 @@ export class RecipeEditComponent implements OnInit {
           );
         }
       }
-    }
-
-    this.recipeForm = new FormGroup({
+    }    this.recipeForm = new FormGroup({
       name: new FormControl(recipeName, Validators.required),
       imagePath: new FormControl(recipeImagePath, Validators.required),
       description: new FormControl(recipeDescription, Validators.required),
-      category: new FormControl(recipeCategory, Validators.required),
+      category: new FormControl(recipeCategory || '', Validators.required),
       ingredients: recipeIngredients
     });
   }
