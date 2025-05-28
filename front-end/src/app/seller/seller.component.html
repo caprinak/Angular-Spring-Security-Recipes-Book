@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Recipe Management Dashboard</h2>
+      <hr>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-md-12 mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <button class="btn btn-success me-2" (click)="onNewRecipe()">
+            <i class="bi bi-plus-circle"></i> Add New Recipe
+          </button>
+          <button class="btn btn-primary" (click)="onSaveAll()">
+            <i class="bi bi-cloud-upload"></i> Save All Recipes
+          </button>
+        </div>
+        <div>
+          <button class="btn btn-outline-secondary" (click)="onFetchRecipes()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh List
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter by category -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Filter Recipes</h5>
+          <div class="btn-group" role="group">
+            <button 
+              *ngFor="let category of categories"
+              class="btn"
+              [class.btn-primary]="selectedCategory === category"
+              [class.btn-outline-primary]="selectedCategory !== category"
+              (click)="onSelectCategory(category)">
+              {{ category }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Display current recipes -->
+  <div class="row">
+    <div class="col-md-12">
+      <app-recipe-list [recipes]="filteredRecipes"></app-recipe-list>
+    </div>
+  </div>
+</div>

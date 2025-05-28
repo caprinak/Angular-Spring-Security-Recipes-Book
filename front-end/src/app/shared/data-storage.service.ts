@@ -15,6 +15,8 @@ interface SpringDataResponse {
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
+  private baseUrl = 'http://localhost:8080/api';
+
   constructor(
     private http: HttpClient,
     private recipeService: RecipeService,
@@ -23,7 +25,6 @@ export class DataStorageService {
 
   storeRecipes() {
     const recipes = this.recipeService.getRecipes();
-    
     return this.authService.user.pipe(
       take(1),
       exhaustMap(user => {
@@ -36,13 +37,12 @@ export class DataStorageService {
 
         return this.http
           .put(
-            'http://localhost:8080/api/batch/recipes',
+            `${this.baseUrl}/batch/recipes`,
             recipes,
             {
               headers: new HttpHeaders().set('Authorization', `Bearer ${user.token}`)
             }
-          )
-          .pipe(
+          )          .pipe(
             tap(response => {
               console.log('Store recipes response:', response);
             }),
@@ -52,39 +52,38 @@ export class DataStorageService {
             })
           );
       })
-    ).subscribe(
-      response => {
-        console.log('Recipes stored successfully:', response);
-      },
-      error => {
-        console.error('Error storing recipes:', error);
-      }
     );
   }
 
   fetchRecipes() {
-    return this.http
-      .get<SpringDataResponse>(
-        'http://localhost:8080/api/recipes'
-      )
-      .pipe(
-        tap(response => {
-          console.log('API Response:', response);
-        }),
-        map(response => response._embedded.recipes),
-        map(recipes => {
-          return recipes.map(recipe => ({
-            ...recipe,
-            ingredients: recipe.ingredients ? recipe.ingredients : []
-          }));
-        }),
-        tap(recipes => {
-          this.recipeService.setRecipes(recipes);
-        }),
-        catchError(error => {
-          console.error('Error fetching recipes:', error);
-          return throwError(() => new Error('Could not fetch recipes'));
-        })
-      );
+    return this.authService.user.pipe(
+      take(1),
+      exhaustMap(user => {
+        if (!user) {
+          return throwError(() => new Error('User not authenticated'));
+        }
+        return this.http
+          .get<SpringDataResponse>(
+            `${this.baseUrl}/recipes`,
+            {
+              headers: new HttpHeaders().set('Authorization', `Bearer ${user.token}`)
+            }
+          );
+      }),
+      map(response => response._embedded.recipes),
+      map(recipes => {
+        return recipes.map(recipe => ({
+          ...recipe,
+          ingredients: recipe.ingredients ? recipe.ingredients : []
+        }));
+      }),
+      tap(recipes => {
+        this.recipeService.setRecipes(recipes);
+      }),
+      catchError(error => {
+        console.error('Error fetching recipes:', error);
+        return throwError(() => new Error('Could not fetch recipes'));
+      })
+    );
   }
 }
