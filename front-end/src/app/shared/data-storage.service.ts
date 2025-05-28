@@ -15,6 +15,7 @@ interface SpringDataResponse {
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
+  
   private baseUrl = 'http://localhost:8080/api';
 
   constructor(
@@ -22,7 +23,36 @@ export class DataStorageService {
     private recipeService: RecipeService,
     private authService: AuthService
   ) {}
+  addRecipes(filteredRecipes: Recipe[]) {
+    return this.authService.user.pipe(
+      take(1),
+      exhaustMap(user => {
+        if (!user) {
+          return throwError(() => new Error('User not authenticated'));
+        }
 
+        // Debug log to verify token
+        console.log('Using token:', user.token);
+
+        return this.http
+          .post(
+            `${this.baseUrl}/batch/recipes`,
+            filteredRecipes,
+            {
+              headers: new HttpHeaders().set('Authorization', `Bearer ${user.token}`)
+            }
+          )          .pipe(
+            tap(response => {
+              console.log('Store recipes response:', response);
+            }),
+            catchError(error => {
+              console.error('Store recipes error:', error);
+              return throwError(() => new Error('Failed to store recipes'));
+            })
+          );
+      })
+    );
+  }
   storeRecipes() {
     const recipes = this.recipeService.getRecipes();
     return this.authService.user.pipe(

@@ -15,11 +15,11 @@ import { Ingredient } from '../shared/ingredient.model';
 export class SellerComponent implements OnInit, OnDestroy {
   categories = ['ALL', 'BREAKFAST', 'LUNCH', 'DINNER', 'DESSERT'];
   selectedCategory = 'ALL';
-  filteredRecipes: Recipe[] = [];
+  feedRecipes: Recipe[] = [];
   private subscriptions = new Subscription();
 
   constructor(
-    private recipeService: RecipeService,
+   
     private dataStorageService: DataStorageService,
     private router: Router,
     private route: ActivatedRoute
@@ -27,18 +27,12 @@ export class SellerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Subscribe to recipe changes
-    this.subscriptions.add(
-      this.recipeService.recipesChanged.subscribe(() => {
-        this.filterRecipes();
-      })
-    );
-
-    // First try to fetch existing recipes
-    this.subscriptions.add(
-      this.dataStorageService.fetchRecipes()
-        .subscribe({
-          next: () => {
-            const dummyRecipes = [
+    // this.subscriptions.add(
+    //   this.recipeService.recipesChanged.subscribe(() => {
+    //     this.filterRecipes();
+    //   })
+    // );
+    const dummyRecipes = [
               new Recipe(
                 'Classic Pancakes',
                 'Fluffy pancakes with maple syrup',
@@ -62,17 +56,8 @@ export class SellerComponent implements OnInit, OnDestroy {
                 'LUNCH'
               )
             ];
-            this.recipeService.setRecipes(dummyRecipes);
-            this.filterRecipes();
-          },
-          error: () => {
-            // If fetching fails, initialize with dummy data
-            
-            this.filterRecipes();
+    this.feedRecipes = dummyRecipes;
           }
-        })
-    );
-  }
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
@@ -83,9 +68,9 @@ export class SellerComponent implements OnInit, OnDestroy {
     this.filterRecipes();
   }
 
-  filterRecipes() {
-    const recipes = this.recipeService.getRecipes();
-    this.filteredRecipes = this.selectedCategory === 'ALL'
+  filterRecipes(feedRecipes: Recipe[] = []) {
+    const recipes = feedRecipes; // Replace with this.recipeService.getRecipes() in a real application
+    this.feedRecipes = this.selectedCategory === 'ALL'
       ? recipes
       : recipes.filter(recipe => recipe.category === this.selectedCategory);
   }
@@ -96,7 +81,7 @@ export class SellerComponent implements OnInit, OnDestroy {
 
   onSaveAll() {
     this.subscriptions.add(
-      this.dataStorageService.storeRecipes()
+      this.dataStorageService.addRecipes(this.feedRecipes)
         .subscribe({
           next: (response) => {
             console.log('All recipes saved successfully:', response);

@@ -21,6 +21,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (!this.recipes) {
     this.subscription = this.recipeService.recipesChanged
       .subscribe(
         (recipes: Recipe[]) => {
@@ -29,6 +30,8 @@ export class RecipeListComponent implements OnInit, OnDestroy {
       );
     this.recipes = this.recipeService.getRecipes();
   }
+   // this._allRecipes = this.recipes.slice();
+}
 
   onNewRecipe() {
     this.router.navigate(['new'], {relativeTo: this.route});
