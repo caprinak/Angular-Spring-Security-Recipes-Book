@@ -5,6 +5,7 @@ public enum MealCategory {
     LUNCH("Lunch"),
     DINNER("Dinner"),
     DESSERT("Dessert"),
+    SNACK("Snack"),
     OTHER("Other");
 
     private final String displayName;

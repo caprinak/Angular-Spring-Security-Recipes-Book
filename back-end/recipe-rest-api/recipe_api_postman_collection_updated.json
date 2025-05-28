@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6",
+		"name": "Recipe REST API",
+		"description": "Collection for testing the Recipe REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "User Signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"returnSecureToken\": true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Register a new user"
+					},
+					"response": []
+				},
+				{
+					"name": "User Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"returnSecureToken\": true\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with existing user credentials"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/refresh-token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"refresh-token"
+							]
+						},
+						"description": "Get a new access token using a refresh token"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user signup and login"
+		},
+		{
+			"name": "Recipes",
+			"item": [
+				{
+					"name": "Get All Recipes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/batch/recipes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"batch",
+								"recipes"
+							]
+						},
+						"description": "Get all recipes (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Save Multiple Recipes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"name\": \"Tasty Schnitzel\",\n    \"description\": \"A super-tasty Schnitzel - just awesome!\",\n    \"imagePath\": \"https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG\",\n    \"category\": \"DINNER\",\n    \"ingredients\": [\n      {\n        \"name\": \"Meat\",\n        \"amount\": \"1\",\n        \"units\": \"Pound\"\n      },\n      {\n        \"name\": \"French Fries\",\n        \"amount\": \"2\",\n        \"units\": \"Pounds\"\n      }\n    ]\n  },\n  {\n    \"name\": \"Big Fat Burger\",\n    \"description\": \"What else you need to say?\",\n    \"imagePath\": \"https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg\",\n    \"category\": \"LUNCH\",\n    \"ingredients\": [\n      {\n        \"name\": \"Meat\",\n        \"amount\": \"1\",\n        \"units\": \"Pound\"\n      },\n      {\n        \"name\": \"Buns\",\n        \"amount\": \"2\",\n        \"units\": \"Pieces\"\n      }\n    ]\n  }\n]"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/batch/recipes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"batch",
+								"recipes"
+							]
+						},
+						"description": "Save multiple recipes (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Multiple Recipes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"id\": 1,\n    \"name\": \"Updated Schnitzel\",\n    \"description\": \"An updated super-tasty Schnitzel!\",\n    \"imagePath\": \"https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG\",\n    \"category\": \"DINNER\",\n    \"ingredients\": [\n      {\n        \"id\": 1,\n        \"name\": \"Premium Meat\",\n        \"amount\": \"1.5\",\n        \"units\": \"Pounds\"\n      },\n      {\n        \"id\": 2,\n        \"name\": \"French Fries\",\n        \"amount\": \"2\",\n        \"units\": \"Pounds\"\n      }\n    ]\n  }\n]"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/batch/recipes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"batch",
+								"recipes"
+							]
+						},
+						"description": "Update multiple recipes (requires authentication)"
+					},
+					"response": []
+				},
+				{
+					"name": "Replace All Recipes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"name\": \"New Recipe\",\n    \"description\": \"A new recipe description\",\n    \"imagePath\": \"https://example.com/image.jpg\",\n    \"category\": \"BREAKFAST\",\n    \"ingredients\": [\n      {\n        \"name\": \"Ingredient 1\",\n        \"amount\": \"1\",\n        \"units\": \"Cup\"\n      },\n      {\n        \"name\": \"Ingredient 2\",\n        \"amount\": \"2\",\n        \"units\": \"Tablespoons\"\n      }\n    ]\n  }\n]"
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/recipes/replace-all",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"recipes",
+								"replace-all"
+							]
+						},
+						"description": "Replace all recipes (requires authentication)"
+					},
+					"response": []
+				}
+			],
+			"description": "Recipe management endpoints (all require authentication)"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Automatically extract and save JWT token from login/signup responses",
+					"if (pm.response.code === 200) {",
+					"    const responseJson = pm.response.json();",
+					"    if (responseJson.idToken) {",
+					"        pm.environment.set(\"jwt_token\", responseJson.idToken);",
+					"        console.log(\"JWT token saved to environment variable: jwt_token\");",
+					"    }",
+					"    if (responseJson.refreshToken) {",
+					"        pm.environment.set(\"refresh_token\", responseJson.refreshToken);",
+					"        console.log(\"Refresh token saved to environment variable: refresh_token\");",
+					"    }",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
