@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, tap, catchError, take, exhaustMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { map, tap, catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
 import { Recipe } from '../recipes/recipe.model';
@@ -15,6 +15,8 @@ interface SpringDataResponse {
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
+  private baseUrl = 'http://localhost:8080/api';
+
   constructor(
     private http: HttpClient,
     private recipeService: RecipeService,
@@ -23,43 +25,28 @@ export class DataStorageService {
 
   storeRecipes() {
     const recipes = this.recipeService.getRecipes();
-    
-    return this.authService.user.pipe(
-      take(1),
-      exhaustMap(user => {
-        if (!user) {
-          return throwError(() => new Error('User not authenticated'));
+    return this.http
+      .post(
+        `${this.baseUrl}/batch/recipes`,
+        recipes
+      )
+      .pipe(
+        tap(response => {
+          console.log('Store recipes response:', response);
+        }),
+        catchError(error => {
+          console.error('Store recipes error:', error);
+          return throwError(() => new Error('Failed to store recipes'));
+        })
+      )
+      .subscribe(
+        response => {
+          console.log('Recipes stored successfully:', response);
+        },
+        error => {
+          console.error('Error storing recipes:', error);
         }
-
-        // Debug log to verify token
-        console.log('Using token:', user.token);
-
-        return this.http
-          .put(
-            'http://localhost:8080/api/batch/recipes',
-            recipes,
-            {
-              headers: new HttpHeaders().set('Authorization', `Bearer ${user.token}`)
-            }
-          )
-          .pipe(
-            tap(response => {
-              console.log('Store recipes response:', response);
-            }),
-            catchError(error => {
-              console.error('Store recipes error:', error);
-              return throwError(() => new Error('Failed to store recipes'));
-            })
-          );
-      })
-    ).subscribe(
-      response => {
-        console.log('Recipes stored successfully:', response);
-      },
-      error => {
-        console.error('Error storing recipes:', error);
-      }
-    );
+      );
   }
 
   fetchRecipes() {

@@ -54,6 +54,21 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-xs-12">
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select
+              id="category"
+              formControlName="category"
+              class="form-control">
+              <option *ngFor="let category of categories" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-xs-12" formArrayName="ingredients">
           <div
             class="row"

@@ -36,15 +36,39 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             final String authHeader = request.getHeader("Authorization");
             final String jwt;
             final String userEmail;
-            
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+
+            // Log the request URL and method for debugging
+            System.out.println("Request URL: " + request.getRequestURL() + ", Method: " + request.getMethod());
+
+            if (authHeader == null) {
+                System.out.println("Authorization header is missing");
+                // Only apply authentication for protected endpoints
+                if (isProtectedEndpoint(request)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Authentication error: Authorization header is missing");
+                    return;
+                }
                 filterChain.doFilter(request, response);
                 return;
             }
-            
+
+            if (!authHeader.startsWith("Bearer ")) {
+                System.out.println("Authorization header does not start with 'Bearer '");
+                if (isProtectedEndpoint(request)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("Authentication error: Authorization header must start with 'Bearer '");
+                    return;
+                }
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             jwt = authHeader.substring(7);
+            System.out.println("JWT token: " + jwt.substring(0, Math.min(10, jwt.length())) + "...");
+
             userEmail = jwtService.extractUsername(jwt);
-            
+            System.out.println("Extracted email: " + userEmail);
+
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 Optional<User> userOptional = userRepository.findByEmail(userEmail);
                 if (userOptional.isPresent()) {
@@ -59,13 +83,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 new WebAuthenticationDetailsSource().buildDetails(request)
                         );
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+                        System.out.println("Authentication successful for user: " + userEmail);
+                    } else {
+                        System.out.println("Token is not valid");
+                        if (isProtectedEndpoint(request)) {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write("Authentication error: Token is not valid or has expired");
+                            return;
+                        }
+                    }
+                } else {
+                    System.out.println("User not found: " + userEmail);
+                    if (isProtectedEndpoint(request)) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        response.getWriter().write("Authentication error: User not found");
+                        return;
                     }
                 }
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
+            System.out.println("Authentication error: " + e.getMessage());
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Authentication error: " + e.getMessage());
         }
+    }
+
+    private boolean isProtectedEndpoint(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/api/recipes") || path.startsWith("/api/batch/recipes");
     }
 }

@@ -1,0 +1,23 @@
+.category-filter {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  min-width: 100px;
+  transition: all 0.3s ease;
+}
+
+.btn.active {
+  background-color: #007bff;
+  color: white;
+}

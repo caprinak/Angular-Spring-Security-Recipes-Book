@@ -1,6 +1,7 @@
 <div class="row">
   <div class="col-md-5">
-    <app-recipe-list></app-recipe-list>
+    <app-recipe-category-filter (categorySelected)="onCategorySelected($event)"></app-recipe-category-filter>
+    <app-recipe-list [filteredRecipes]="filteredRecipes"></app-recipe-list>
   </div>
   <div class="col-md-7">
     <router-outlet></router-outlet>

@@ -14,14 +14,17 @@ public class Recipe {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     private String name;
-    
+
     @Column(length = 2000)
     private String description;
-    
+
     private String imagePath;
-    
+
+    @Enumerated(EnumType.STRING)
+    private MealCategory category;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "recipe_id")
     private List<Ingredient> ingredients;

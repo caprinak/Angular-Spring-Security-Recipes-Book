@@ -1,0 +1,12 @@
+<div class="category-filter">
+  <h3>Filter by Category</h3>
+  <div class="category-buttons">
+    <button
+      *ngFor="let category of categories"
+      (click)="onCategorySelect(category)"
+      [class.active]="isSelected(category)"
+      class="btn btn-outline-primary me-2">
+      {{ category }}
+    </button>
+  </div>
+</div>
