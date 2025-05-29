@@ -12,6 +12,7 @@ import { RecipeService } from '../recipe.service';
 export class RecipeDetailComponent implements OnInit {
   recipe: Recipe;
   id: number;
+  isMyRecipe: boolean;
 
   constructor(private recipeService: RecipeService,
               private route: ActivatedRoute,
@@ -19,11 +20,17 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Check if we're in the my-recipes section
+    this.isMyRecipe = this.router.url.includes('/my-recipes');
+    
     this.route.params
       .subscribe(
         (params: Params) => {
           this.id = +params['id'];
           this.recipe = this.recipeService.getRecipe(this.id);
+          if (!this.recipe) {
+            this.router.navigate(['/recipe-book']);
+          }
         }
       );
   }
@@ -40,6 +47,15 @@ export class RecipeDetailComponent implements OnInit {
   onDeleteRecipe() {
     this.recipeService.deleteRecipe(this.id);
     this.router.navigate(['/recipes']);
+  }
+
+  onSubmitAsIdea() {
+    // Create a copy of the current recipe
+    const currentRecipe = { ...this.recipe };
+    
+    // Add to recipe ideas and navigate
+    this.recipeService.addRecipe(currentRecipe);
+    this.router.navigate(['/recipe-ideas']);
   }
 
 }

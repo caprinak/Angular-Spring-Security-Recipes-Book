@@ -22,6 +22,7 @@ import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinne
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { SellerComponent } from './seller/seller.component';
 import { RecipeBookComponent } from './recipes/recipe-book/recipe-book.component';
+import { MyRecipesComponent } from './recipes/my-recipes/my-recipes.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,9 @@ import { RecipeBookComponent } from './recipes/recipe-book/recipe-book.component
     RecipeEditComponent,    AuthComponent,
     LoadingSpinnerComponent,
     SellerComponent,
-    RecipeBookComponent
+    RecipeBookComponent,
+    MyRecipesComponent,
+    MyRecipesComponent
   ],
   imports: [
     BrowserModule,

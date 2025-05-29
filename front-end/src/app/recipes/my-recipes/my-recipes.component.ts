@@ -1,30 +1,35 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
 import { MealCategory } from '../../shared/enums/meal-category.enum';
-import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-recipe-book',
-  templateUrl: './recipe-book.component.html',
-  styleUrls: ['./recipe-book.component.css']
+  selector: 'app-my-recipes',
+  templateUrl: './my-recipes.component.html',
+  styleUrls: ['./my-recipes.component.css']
 })
-export class RecipeBookComponent implements OnInit, OnDestroy {
-  recipes: Recipe[] = [];
+export class MyRecipesComponent implements OnInit, OnDestroy {
+  myRecipes: Recipe[] = [];
   filteredRecipes: Recipe[] = [];
   categories = Object.values(MealCategory);
   selectedCategory: string | null = null;
   private subscription: Subscription;
 
-  constructor(private recipeService: RecipeService) { }
+  constructor(
+    private recipeService: RecipeService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    this.recipes = this.recipeService.getRecipes();
-    this.filteredRecipes = this.recipes;
+    this.myRecipes = this.recipeService.getMyRecipes();
+    this.filteredRecipes = this.myRecipes;
     
-    this.subscription = this.recipeService.recipesChanged.subscribe(
+    this.subscription = this.recipeService.myRecipesChanged.subscribe(
       (recipes: Recipe[]) => {
-        this.recipes = recipes;
+        this.myRecipes = recipes;
         this.filterRecipes();
       }
     );
@@ -37,23 +42,14 @@ export class RecipeBookComponent implements OnInit, OnDestroy {
 
   private filterRecipes() {
     this.filteredRecipes = this.selectedCategory
-      ? this.recipes.filter(recipe => recipe.category === this.selectedCategory)
-      : this.recipes;
+      ? this.myRecipes.filter(recipe => recipe.category === this.selectedCategory)
+      : this.myRecipes;
   }
 
-  toggleFavorite(recipe: Recipe, event: Event) {
+  removeFromFavorites(recipe: Recipe, event: Event) {
     event.preventDefault(); // Prevent navigation
     event.stopPropagation(); // Prevent event bubbling
-    
-    if (this.recipeService.isInMyRecipes(recipe)) {
-      this.recipeService.removeFromMyRecipes(recipe);
-    } else {
-      this.recipeService.addToMyRecipes(recipe);
-    }
-  }
-
-  isInMyRecipes(recipe: Recipe): boolean {
-    return this.recipeService.isInMyRecipes(recipe);
+    this.recipeService.removeFromMyRecipes(recipe);
   }
 
   ngOnDestroy() {

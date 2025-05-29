@@ -18,14 +18,17 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   categories = Object.values(MealCategory);
   selectedCategories: Set<string> = new Set();
+  showNewButton: boolean = false;
   
   constructor(
     private recipeService: RecipeService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
-
   ngOnInit() {
+    // Check if we're in the my-recipes section
+    this.showNewButton = this.router.url.includes('/my-recipes');
+
     if (!this.recipes) {
       this.subscription = this.recipeService.recipesChanged
         .subscribe(
