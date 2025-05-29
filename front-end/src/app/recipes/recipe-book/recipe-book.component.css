@@ -1,0 +1,68 @@
+.card {
+  transition: all 0.3s ease-in-out;
+  border: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12) !important;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.badge {
+  font-weight: 500;
+  padding: 0.5em 1em;
+}
+
+.btn-outline-secondary {
+  border-width: 2px;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #f8f9fa;
+  color: #000;
+}
+
+.display-4 {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.lead {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+hr.my-4 {
+  opacity: 0.1;
+}
+
+.btn-link {
+  text-decoration: none;
+  color: #666;
+}
+
+.btn-link:hover {
+  color: #000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2.5rem;
+  }
+  
+  .lead {
+    font-size: 1.1rem;
+  }
+}

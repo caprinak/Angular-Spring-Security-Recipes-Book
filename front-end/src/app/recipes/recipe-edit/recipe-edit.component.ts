@@ -72,7 +72,7 @@ export class RecipeEditComponent implements OnInit {
   private initForm() {    let recipeName = '';
     let recipeImagePath = '';
     let recipeDescription = '';
-    let recipeCategory = MealCategory.BREAKFAST;
+    let recipeCategory = null;
     let recipeIngredients = new FormArray([]);
 
     if (this.editMode) {
