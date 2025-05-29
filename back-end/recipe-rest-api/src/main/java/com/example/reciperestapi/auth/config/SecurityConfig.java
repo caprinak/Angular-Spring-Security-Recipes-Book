@@ -23,12 +23,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**")) // Disable CSRF for H2 console
             .cors(cors -> {}) // Use the CORS configuration from WebConfig
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions
+                    .sameOrigin())) // Allow frames for H2 console
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers("/api/auth/**").permitAll();
-                auth.requestMatchers("/h2-console/**").permitAll(); // For H2 database console if needed
+                auth.requestMatchers("/h2-console/**").permitAll(); // For H2 database console
                 auth.requestMatchers("/api/recipes/**").authenticated();
                 auth.requestMatchers("/api/batch/recipes/**").authenticated();
                 auth.anyRequest().authenticated();
@@ -40,7 +44,7 @@ public class SecurityConfig {
                 })
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-            
+
         return http.build();
     }
 

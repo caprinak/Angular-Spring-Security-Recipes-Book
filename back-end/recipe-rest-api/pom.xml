@@ -65,6 +65,19 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- Flyway for database migrations -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<!-- Flyway MySQL support -->
+		<!-- Using version 9.22.3 to ensure compatibility with MySQL 8.4 -->
+		<!-- This overrides the version provided by Spring Boot parent to fix the "MySQL 8.4 is newer than this version of Flyway" warning -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+			<version>9.22.3</version>
+		</dependency>
  	<dependency>
  		<groupId>org.projectlombok</groupId>
  		<artifactId>lombok</artifactId>
