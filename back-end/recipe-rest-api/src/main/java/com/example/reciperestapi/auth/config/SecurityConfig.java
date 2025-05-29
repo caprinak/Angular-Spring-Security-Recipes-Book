@@ -23,8 +23,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**")) // Disable CSRF for H2 console
+                .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> {}) // Use the CORS configuration from WebConfig
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions
