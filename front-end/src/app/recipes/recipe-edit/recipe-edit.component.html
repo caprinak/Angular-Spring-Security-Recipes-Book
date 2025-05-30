@@ -1,19 +1,18 @@
-<div class="row">
-  <div class="col-xs-12">
+<div class="row p-3">
+  <div class="col-12">
     <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
-      <div class="row">
-        <div class="col-xs-12">
+      <div class="row mb-3">
+        <div class="col-12">
           <button
             type="submit"
-            class="btn btn-success"
+            class="btn btn-success me-2"
             [disabled]="!recipeForm.valid">Save</button>
           <button type="button" class="btn btn-danger" (click)="onCancel()">Cancel</button>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
+      </div>      <div class="row mb-3">
+        <div class="col-12">
           <div class="form-group">
-            <label for="name">Name</label>
+            <label for="name" class="form-label">Name</label>
             <input
               type="text"
               id="name"
@@ -34,10 +33,9 @@
               #imagePath>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <img [src]="imagePath.value" class="img-responsive">
+      </div>      <div class="row mb-3">
+        <div class="col-12">
+          <img [src]="imagePath.value" class="img-fluid">
         </div>
       </div>
       <div class="row">

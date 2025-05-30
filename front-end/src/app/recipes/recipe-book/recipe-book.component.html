@@ -40,11 +40,23 @@
         <img [src]="recipe.imagePath" class="card-img-top" [alt]="recipe.name" style="height: 200px; object-fit: cover;">
         <div class="card-body d-flex flex-column">
           <div class="mb-auto">
-            <h5 class="card-title">{{ recipe.name }}</h5>
+            <div class="d-flex justify-content-between align-items-start">
+              <h5 class="card-title">{{ recipe.name }}</h5>
+              <button 
+                *ngIf="!recipe.isPersonal"
+                class="btn btn-link p-0" 
+                [class.text-danger]="isInMyRecipes(recipe)"
+                (click)="toggleFavorite(recipe, $event)">
+                <i class="bi" [class.bi-heart-fill]="isInMyRecipes(recipe)" [class.bi-heart]="!isInMyRecipes(recipe)"></i>
+              </button>
+            </div>
             <span class="badge bg-secondary mb-2">{{ recipe.category }}</span>
+            <span class="badge ms-1" [class.bg-primary]="!recipe.isPersonal" [class.bg-success]="recipe.isPersonal">
+              {{ recipe.isPersonal ? 'Personal' : 'Collected' }}
+            </span>
             <p class="card-text">{{ recipe.description | slice:0:100 }}...</p>
           </div>
-          <a [routerLink]="['/recipes', i]" class="btn btn-primary mt-3">View Details</a>
+          <a [routerLink]="['/recipes', recipe.id]" class="btn btn-primary mt-3">View Details</a>
         </div>
       </div>
     </div>

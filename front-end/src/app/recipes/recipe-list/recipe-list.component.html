@@ -1,33 +1,81 @@
-<div class="row">
-  <div class="col-xs-12">
-    <button class="btn btn-success" (click)="onNewRecipe()">New Recipe</button>
+<div class="card">  <div class="card-header p-2">
+    <!-- Top bar with buttons and filter badge -->
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex gap-2 align-items-center">
+        <button class="btn btn-sm btn-success" (click)="onNewRecipe()" *ngIf="showNewButton">
+          <i class="bi bi-plus-circle me-1"></i>New Recipe
+        </button>
+        <button class="btn btn-sm btn-outline-secondary position-relative" 
+                *ngIf="recipes?.length > 0"
+                data-bs-toggle="modal" 
+                data-bs-target="#filterModal">
+          <i class="bi bi-funnel me-1"></i>
+          Filters
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" 
+                *ngIf="selectedCategories.size">
+            {{selectedCategories.size}}
+            <span class="visually-hidden">active filters</span>
+          </span>
+        </button>
+      </div>
+      <small class="text-muted d-flex align-items-center" *ngIf="selectedCategories.size">
+        <span class="me-2">Filtered by {{selectedCategories.size}} {{selectedCategories.size === 1 ? 'category' : 'categories'}}</span>
+        <button class="btn btn-link btn-sm text-decoration-none p-0" (click)="clearFilters()">
+          <i class="bi bi-x-circle me-1"></i>Clear
+        </button>
+      </small>
+    </div>
   </div>
-</div>
-<hr>
-<!-- Filter by category -->
-<div class="row" *ngIf="recipes?.length > 0">
-  <div class="container"><small class="text-muted me-2 ">Filter by:</small></div>
-  <div class="form-check form-check-inline m-0 me-2 col-xs-3" *ngFor="let category of categories">
-    <input 
-      class="form-check-input"
-      type="checkbox"
-      [id]="'category-' + category"
-      [checked]="selectedCategories.has(category)"
-      (change)="onCategoryChange(category, $event.target.checked)">
-    <label class="form-check-label small" [for]="'category-' + category">
-      {{ category }}
-    </label>
+
+  <!-- Filter Modal -->
+  <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header py-2">
+          <h5 class="modal-title fs-6" id="filterModalLabel">
+            <i class="bi bi-funnel me-1"></i>Filter by Category
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="vstack gap-1">
+            <div class="form-check" *ngFor="let category of categories">
+              <input 
+                class="form-check-input"
+                type="checkbox"
+                [id]="'modal-category-' + category"
+                [checked]="selectedCategories.has(category)"
+                (change)="onCategoryChange(category, $event.target.checked)">
+              <label class="form-check-label" [for]="'modal-category-' + category">
+                {{ category }}
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer py-2">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-sm btn-primary" 
+                  (click)="clearFilters()" 
+                  *ngIf="selectedCategories.size"
+                  data-bs-dismiss="modal">
+            Clear All
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-<br>
-<div class="row mb-3">
-  <div class="col-xs-12">
-    <app-recipe-item
-      *ngFor="let recipeEl of recipes; let i = index"
-      [recipe]="recipeEl"
-      [index]="i">
-    </app-recipe-item>
   </div>
-</div>
+
+  <!-- Scrollable recipe list -->
+  <div class="recipe-list-container" style="max-height: 75vh; overflow-y: auto;">
+    <div class="list-group list-group-flush">
+      <app-recipe-item
+        *ngFor="let recipeEl of recipes; let i = index"
+        [recipe]="recipeEl"
+        [index]="i">
+      </app-recipe-item>
+    </div>
+  </div>
+
 
 

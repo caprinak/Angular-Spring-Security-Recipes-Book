@@ -18,14 +18,17 @@ export class RecipeListComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   categories = Object.values(MealCategory);
   selectedCategories: Set<string> = new Set();
+  showNewButton: boolean = false;
   
   constructor(
     private recipeService: RecipeService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
-
   ngOnInit() {
+    // Check if we're in the my-recipes section
+    this.showNewButton = this.router.url.includes('/my-recipes');
+
     if (!this.recipes) {
       this.subscription = this.recipeService.recipesChanged
         .subscribe(
@@ -51,9 +54,13 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     }
     this.filterRecipes();
   }
+  clearFilters() {
+    this.selectedCategories.clear();
+    this.filterRecipes();
+  }
 
   filterRecipes() {
-    if (this.selectedCategories.size === 0 || this.selectedCategories.has('ALL')) {
+    if (this.selectedCategories.size === 0) {
       this.recipes = this._allRecipes;
     } else {
       this.recipes = this._allRecipes.filter(recipe =>

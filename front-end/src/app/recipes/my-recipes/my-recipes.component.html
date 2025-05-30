@@ -1,0 +1,17 @@
+<div class="container mt-4">
+  <!-- Hero section -->
+  <div class="text-center mb-4">
+    <h2 class="mb-2">My Favorite Recipes</h2>
+    <p class="text-muted">Your personal collection of saved recipes</p>
+  </div>
+
+  <!-- Recipe list -->
+  <app-recipe-list [recipes]="filteredRecipes"></app-recipe-list>
+
+  <!-- Empty state -->
+  <div class="col-12 text-center py-5" *ngIf="filteredRecipes.length === 0">
+    <h5 class="text-muted" *ngIf="!selectedCategory">You haven't saved any recipes yet</h5>
+    <h5 class="text-muted" *ngIf="selectedCategory">No saved recipes in this category</h5>
+    <a routerLink="/recipe-book" class="btn btn-primary mt-3">Browse Recipes</a>
+  </div>
+</div>

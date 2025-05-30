@@ -12,20 +12,27 @@ import { RecipeService } from '../recipe.service';
 export class RecipeDetailComponent implements OnInit {
   recipe: Recipe;
   id: number;
-
-  constructor(private recipeService: RecipeService,
-              private route: ActivatedRoute,
-              private router: Router) {
-  }
+  isInMyRecipes: boolean = false;
+  isPersonal: boolean;
+  constructor(
+    private recipeService: RecipeService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit() {
-    this.route.params
-      .subscribe(
-        (params: Params) => {
-          this.id = +params['id'];
-          this.recipe = this.recipeService.getRecipe(this.id);
+    this.route.params.subscribe(
+      (params: Params) => {
+        this.id = +params['id'];
+        this.recipe = this.recipeService.getRecipe(this.id);
+        this.isPersonal =  this.recipe.isPersonal;
+        if (!this.recipe) {
+          this.router.navigate(['/recipe-book']);
+        } else {
+          this.isInMyRecipes = this.recipeService.isInMyRecipes(this.recipe);
         }
-      );
+      }
+    );
   }
 
   onAddToShoppingList() {
@@ -33,13 +40,26 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   onEditRecipe() {
-    this.router.navigate(['edit'], {relativeTo: this.route});
-    // this.router.navigate(['../', this.id, 'edit'], {relativeTo: this.route});
+    if (this.recipe.isPersonal) {
+      this.router.navigate(['edit'], {relativeTo: this.route});
+    }
   }
 
   onDeleteRecipe() {
-    this.recipeService.deleteRecipe(this.id);
-    this.router.navigate(['/recipes']);
+    if (this.recipe.isPersonal) {
+      this.recipeService.deleteRecipe(this.id);
+      this.router.navigate(['/recipes']);
+    }
   }
 
+  onToggleFavorite() {
+    if (!this.recipe.isPersonal) {
+      if (this.isInMyRecipes) {
+        this.recipeService.removeFromMyRecipes(this.recipe);
+      } else {
+        this.recipeService.addToMyRecipes(this.recipe);
+      }
+      this.isInMyRecipes = !this.isInMyRecipes;
+    }
+  }
 }
