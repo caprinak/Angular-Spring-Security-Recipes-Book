@@ -1,9 +1,6 @@
-<div class="row">  <div class="col-12">
-    <img
-      [src]="recipe.imagePath"
-      alt="{{ recipe.name }}"
-      class="img-fluid"
-      style="max-height: 300px;">
+<div class="row">
+  <div class="col-12">
+    <img [src]="recipe.imagePath" alt="{{ recipe.name }}" class="img-fluid" style="max-height: 300px;">
   </div>
 </div>
 <div class="row">
@@ -14,23 +11,38 @@
 <div class="row mb-3">
   <div class="col-12">
     <span class="badge bg-primary me-2">{{ recipe.category }}</span>
+    <span class="badge" [class.bg-primary]="!recipe.isPersonal" [class.bg-success]="recipe.isPersonal">
+      {{ recipe.isPersonal ? 'Personal Recipe' : 'Collected Recipe' }}
+    </span>
   </div>
 </div>
 <div class="row">
   <div class="col-12">
-    <div
-      class="btn-group"
-      appDropdown><button
-        type="button"
-        class="btn btn-primary dropdown-toggle">
-        Manage Recipe <span class="caret"></span>
+    <div class="dropdown" appDropdown>
+      <button type="button" class="btn btn-primary dropdown-toggle btn-sm">
+        Manage Recipe
       </button>
-      <ul class="dropdown-menu">
-        <li><a (click)="onAddToShoppingList()" style="cursor: pointer;">To Shopping List</a></li>
-        <li><a style="cursor: pointer;" (click)="onEditRecipe()">Edit Recipe</a></li>
-        <li><a style="cursor: pointer;" (click)="onDeleteRecipe()">Delete Recipe</a></li>
-        <li *ngIf="isMyRecipe"><hr class="dropdown-divider"></li>
-        <li *ngIf="isMyRecipe"><a style="cursor: pointer;" (click)="onSubmitAsIdea()">Submit as Recipe Idea</a></li>
+      <ul class="dropdown-menu dropstart shadow-sm" style="min-width: 180px;">
+        <li><a class="dropdown-item" (click)="onAddToShoppingList()">To Shopping List</a></li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <!-- Edit and Delete options always visible for testing -->
+        <ul *ngIf="isPersonal">
+          <li><a class="dropdown-item" (click)="onEditRecipe()">Edit Recipe</a></li>
+          <li><a class="dropdown-item" (click)="onDeleteRecipe()">Delete Recipe</a></li>
+        </ul>
+           <!-- Show Add to Favorites only for collected recipes -->
+        <ng-container *ngIf="!recipe.isPersonal">
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <a *ngIf="!isPersonal" class="dropdown-item" (click)="onToggleFavorite()">
+              {{ 'Remove from Favorites' }}
+            </a>
+          </li>
+        </ng-container>
       </ul>
     </div>
   </div>
@@ -43,9 +55,7 @@
 <div class="row">
   <div class="col-xs-12">
     <ul class="list-group">
-      <li
-        class="list-group-item"
-        *ngFor="let ingredient of recipe.ingredients">
+      <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">
         {{ ingredient.name }} - {{ ingredient.amount }}
       </li>
     </ul>

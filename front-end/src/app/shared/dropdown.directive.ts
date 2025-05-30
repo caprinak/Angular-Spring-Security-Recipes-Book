@@ -6,13 +6,17 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 export class DropdownDirective {
   constructor(private el: ElementRef) {}
 
-  @HostListener('document:click', ['$event'])
-  toggleOpen(event: Event) {
+  @HostListener('click')
+  onClick() {
     const dropdown = this.el.nativeElement.querySelector('.dropdown-menu');
-    if (this.el.nativeElement.contains(event.target)) {
-      dropdown.classList.toggle('show');
-    } else {
+    const button = this.el.nativeElement.querySelector('.dropdown-toggle');
+    
+    if (dropdown.classList.contains('show')) {
       dropdown.classList.remove('show');
+      button.setAttribute('aria-expanded', 'false');
+    } else {
+      dropdown.classList.add('show');
+      button.setAttribute('aria-expanded', 'true');
     }
 }
 }

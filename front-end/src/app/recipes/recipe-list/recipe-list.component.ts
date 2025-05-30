@@ -54,9 +54,13 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     }
     this.filterRecipes();
   }
+  clearFilters() {
+    this.selectedCategories.clear();
+    this.filterRecipes();
+  }
 
   filterRecipes() {
-    if (this.selectedCategories.size === 0 || this.selectedCategories.has('ALL')) {
+    if (this.selectedCategories.size === 0) {
       this.recipes = this._allRecipes;
     } else {
       this.recipes = this._allRecipes.filter(recipe =>

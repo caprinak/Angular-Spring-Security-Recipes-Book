@@ -12,29 +12,11 @@ import { RecipesResolverService } from './recipes/recipes-resolver.service';
 import { AuthComponent } from './auth/auth.component';
 import { AuthGuard } from './auth/auth.guard';
 import { SellerComponent } from './seller/seller.component';
+import { RecipeEditGuard } from './recipes/recipe-edit/recipe-edit.guard';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/recipe-book', pathMatch: 'full' },
   { path: 'recipe-book', component: RecipeBookComponent },
-  {
-    path: 'recipes',
-    component: RecipesComponent,
-    canActivate: [AuthGuard],
-    children: [
-      { path: '', component: RecipeStartComponent },
-      { path: 'new', component: RecipeEditComponent },
-      {
-        path: ':id',
-        component: RecipeDetailComponent,
-        resolve: [RecipesResolverService]
-      },
-      {
-        path: ':id/edit',
-        component: RecipeEditComponent,
-        resolve: [RecipesResolverService]
-      }
-    ]
-  },
   {
     path: 'recipe-ideas',
     component: RecipesComponent,
@@ -50,13 +32,30 @@ const appRoutes: Routes = [
       {
         path: ':id/edit',
         component: RecipeEditComponent,
-        resolve: [RecipesResolverService]
+        resolve: [RecipesResolverService],
+        canActivate: [RecipeEditGuard]
       }
-    ]  },
+    ]  
+  },  
   { 
     path: 'my-recipes',
-    component: MyRecipesComponent,
-    canActivate: [AuthGuard]
+    component: RecipesComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: RecipeStartComponent },
+      { path: 'new', component: RecipeEditComponent },
+      {
+        path: ':id',
+        component: RecipeDetailComponent,
+        resolve: [RecipesResolverService]
+      },
+      {
+        path: ':id/edit',
+        component: RecipeEditComponent,
+        resolve: [RecipesResolverService],
+        canActivate: [RecipeEditGuard]
+      }
+    ]
   },
   { path: 'shopping-list', component: ShoppingListComponent },
   { path: 'auth', component: AuthComponent },

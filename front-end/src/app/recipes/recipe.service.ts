@@ -15,11 +15,14 @@ export class RecipeService {
   private nextId = 1;
 
   constructor(private slService: ShoppingListService) {}
+  
   setRecipes(recipes: Recipe[]) {
     this.recipes = recipes.map(recipe => {
       if (!recipe.id) {
         recipe.id = this.nextId++;
       }
+      // Set collected recipes as non-personal by default
+      recipe.isPersonal = false;
       return recipe;
     });
     this.recipesChanged.next(this.recipes.slice());
@@ -36,8 +39,10 @@ export class RecipeService {
   addIngredientsToShoppingList(ingredients: Ingredient[]) {
     this.slService.addIngredients(ingredients);
   }
+
   addRecipe(recipe: Recipe) {
     recipe.id = this.nextId++;
+    recipe.isPersonal = true; // New recipes created by user are personal
     this.recipes.push(recipe);
     this.recipesChanged.next(this.recipes.slice());
   }
@@ -46,6 +51,8 @@ export class RecipeService {
     const index = this.recipes.findIndex(r => r.id === id);
     if (index !== -1) {
       newRecipe.id = id;
+      // Preserve the original isPersonal status
+      newRecipe.isPersonal = this.recipes[index].isPersonal;
       this.recipes[index] = newRecipe;
       this.recipesChanged.next(this.recipes.slice());
     }
@@ -62,12 +69,15 @@ export class RecipeService {
   getMyRecipes() {
     return this.myRecipes.slice();
   }
+
   addToMyRecipes(recipe: Recipe) {
-    // Check if recipe already exists in myRecipes
-    const exists = this.myRecipes.some(r => r.id === recipe.id);
-    if (!exists) {
-      this.myRecipes.push({...recipe});
-      this.myRecipesChanged.next(this.myRecipes.slice());
+    // Only allow adding collected (non-personal) recipes to favorites
+    if (!recipe.isPersonal) {
+      const exists = this.myRecipes.some(r => r.id === recipe.id);
+      if (!exists) {
+        this.myRecipes.push({...recipe});
+        this.myRecipesChanged.next(this.myRecipes.slice());
+      }
     }
   }
 

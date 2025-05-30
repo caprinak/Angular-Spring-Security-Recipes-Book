@@ -43,6 +43,7 @@
             <div class="d-flex justify-content-between align-items-start">
               <h5 class="card-title">{{ recipe.name }}</h5>
               <button 
+                *ngIf="!recipe.isPersonal"
                 class="btn btn-link p-0" 
                 [class.text-danger]="isInMyRecipes(recipe)"
                 (click)="toggleFavorite(recipe, $event)">
@@ -50,6 +51,9 @@
               </button>
             </div>
             <span class="badge bg-secondary mb-2">{{ recipe.category }}</span>
+            <span class="badge ms-1" [class.bg-primary]="!recipe.isPersonal" [class.bg-success]="recipe.isPersonal">
+              {{ recipe.isPersonal ? 'Personal' : 'Collected' }}
+            </span>
             <p class="card-text">{{ recipe.description | slice:0:100 }}...</p>
           </div>
           <a [routerLink]="['/recipes', recipe.id]" class="btn btn-primary mt-3">View Details</a>

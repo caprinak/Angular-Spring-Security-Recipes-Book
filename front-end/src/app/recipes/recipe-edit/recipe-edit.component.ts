@@ -19,7 +19,7 @@ export class RecipeEditComponent implements OnInit {
   categories = Object.values(MealCategory);
 
   get recipeControls() {
-    return (this.recipeForm.get('ingredients') as FormArray).controls
+    return (this.recipeForm.get('ingredients') as FormArray).controls;
   }
 
   constructor(
@@ -32,14 +32,22 @@ export class RecipeEditComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       this.id = +params['id'];
       this.editMode = params['id'] != null;
+      const recipe = this.editMode ? this.recipeService.getRecipe(this.id) : null;      // If trying to edit a collected recipe, redirect back to the recipe detail
+      if (recipe && !recipe.isPersonal) {
+        this.router.navigate(['/my-recipes', this.id]);
+        return;
+      }
+
       this.initForm();
     });
   }
+
   onSubmit() {
     const formValue = this.recipeForm.value;
     const recipe = {
       ...formValue,
-      id: this.id
+      id: this.id,
+      isPersonal: true // Always mark new/edited recipes as personal
     };
 
     if (this.editMode) {
@@ -51,7 +59,8 @@ export class RecipeEditComponent implements OnInit {
   }
 
   onAddIngredient() {
-    (<FormArray>this.recipeForm.get('ingredients')).push(      new FormGroup({
+    (<FormArray>this.recipeForm.get('ingredients')).push(
+      new FormGroup({
         name: new FormControl(null, Validators.required),
         amount: new FormControl(null, [
           Validators.required,
@@ -69,7 +78,9 @@ export class RecipeEditComponent implements OnInit {
   onCancel() {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
-  private initForm() {    let recipeName = '';
+
+  private initForm() {
+    let recipeName = '';
     let recipeImagePath = '';
     let recipeDescription = '';
     let recipeCategory = null;
@@ -80,9 +91,11 @@ export class RecipeEditComponent implements OnInit {
       recipeName = recipe.name;
       recipeImagePath = recipe.imagePath;
       recipeDescription = recipe.description;
-      recipeCategory = (recipe.category as MealCategory)
+      recipeCategory = (recipe.category as MealCategory);
+      
       if (recipe['ingredients']) {
-        for (let ingredient of recipe.ingredients) {          recipeIngredients.push(
+        for (let ingredient of recipe.ingredients) {
+          recipeIngredients.push(
             new FormGroup({
               name: new FormControl(ingredient.name, Validators.required),
               amount: new FormControl(ingredient.amount, [
@@ -94,7 +107,9 @@ export class RecipeEditComponent implements OnInit {
           );
         }
       }
-    }    this.recipeForm = new FormGroup({
+    }
+
+    this.recipeForm = new FormGroup({
       name: new FormControl(recipeName, Validators.required),
       imagePath: new FormControl(recipeImagePath, Validators.required),
       description: new FormControl(recipeDescription, Validators.required),

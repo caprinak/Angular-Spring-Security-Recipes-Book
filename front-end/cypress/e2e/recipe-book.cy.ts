@@ -2,14 +2,12 @@ describe('Recipe Book Component', () => {
   const testEmail = 'test@example.com';
   const testPassword = 'test123';
 
-  before(() => {
-    // Login once before all tests
-    cy.login(testEmail, testPassword);
-  });
+ 
 
   beforeEach(() => {
-    // Start from recipe book page
-    cy.visit('/recipe-book');
+
+     cy.login(testEmail, testPassword);
+     cy.visit('/recipes-book');
   });
 
   it('should fetch and display recipes from server', () => {
